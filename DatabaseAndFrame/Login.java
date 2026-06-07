@@ -83,10 +83,10 @@ public class Login extends JFrame {
                 int userId = rs.getInt("id");
 
                 if (role.equals("admin")) {
-                    // new AdminDashboard(username).setVisible(true); // Akan kita buat di tahap selanjutnya
                     JOptionPane.showMessageDialog(this, "Login Admin Berhasil!");
+                    new AdminDashboard(username).setVisible(true); // Akan kita buat di tahap selanjutnya
                 } else {
-                    // new HomeAfterLogin(username, userId).setVisible(true); // Akan kita buat di tahap selanjutnya
+                    //new HomeAfterLogin(username, userId).setVisible(true); // Akan kita buat di tahap selanjutnya
                     JOptionPane.showMessageDialog(this, "Login Berhasil!");
                 }
                 this.dispose();
