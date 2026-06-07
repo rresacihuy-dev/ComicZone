@@ -92,10 +92,4 @@ public class SignUp extends JFrame {
             JOptionPane.showMessageDialog(this, "Gagal mendaftar. Username mungkin sudah terpakai.");
         }
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new SignUp().setVisible(true);
-        });
-    }
 }

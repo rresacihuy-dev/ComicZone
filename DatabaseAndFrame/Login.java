@@ -99,9 +99,4 @@ public class Login extends JFrame {
             ex.printStackTrace();
         }
     }
-
-    // Main method sementara untuk menjalankan aplikasi
-    public static void main(String[] args) {
-        new Login().setVisible(true);
-    }
 }
