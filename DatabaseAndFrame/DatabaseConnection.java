@@ -3,7 +3,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    private static final String url = "jdbc:mysql://localhost:3306/comiczone_db";
+    private static final String url = "jdbc:mysql://localhost:3306/comiczonedatabase";
     private static final String user = "root";
     private static final String password = "";
 
