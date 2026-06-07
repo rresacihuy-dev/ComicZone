@@ -54,7 +54,7 @@ public class SignUp extends JFrame {
         // Action Listener untuk pindah ke Login
         lblLogin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                //new LoginFrame().setVisible(true);
+                new Login().setVisible(true);
                 dispose(); // Menutup frame Sign Up
             }
         });
@@ -85,7 +85,7 @@ public class SignUp extends JFrame {
             pstmt.executeUpdate();
 
             JOptionPane.showMessageDialog(this, "Registrasi Berhasil! Silakan Login.");
-            //new LoginFrame().setVisible(true);
+            new Login().setVisible(true);
             this.dispose();
 
         } catch (Exception ex) {
