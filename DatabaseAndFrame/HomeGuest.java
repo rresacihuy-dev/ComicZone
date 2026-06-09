@@ -9,7 +9,7 @@ public class HomeGuest extends JFrame {
     private DefaultTableModel tableModel;
 
     public HomeGuest() {
-        setTitle("ComicZone - Home (Guest)");
+        setTitle("ComicZone - Home Page (Guest)");
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

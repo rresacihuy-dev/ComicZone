@@ -14,7 +14,7 @@ public class HomeUser extends JFrame {
         this.username = username;
         this.userId = userId;
 
-        setTitle("ComicZone - Home");
+        setTitle("ComicZone - Home Page (User)");
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
