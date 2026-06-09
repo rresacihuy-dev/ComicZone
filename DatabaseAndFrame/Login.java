@@ -9,18 +9,34 @@ import java.sql.ResultSet;
 public class Login extends JFrame {
     private JTextField txtUsername;
     private JPasswordField txtPassword;
-
+    
     public Login() {
-        setTitle("ComicZone - Login");
+        setTitle("ComicZone - Login Page");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
-
+        
         JLabel lblTitle = new JLabel("Login", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitle.setBounds(100, 20, 200, 30);
         add(lblTitle);
+        
+        JLabel lblAskSignUp = new JLabel("<html><font color='black'>belum punya account?</font></html>");
+        lblAskSignUp.setBounds(115, 45, 200, 25);
+        add(lblAskSignUp);
+        
+        JLabel lblSignUp = new JLabel("<html><font color='blue'><u>sign up</u></font></html>");
+        lblSignUp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblSignUp.setBounds(245, 45, 200, 25);
+        add(lblSignUp);
+        
+        lblSignUp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                new SignUp().setVisible(true);
+                dispose();
+            }
+        });
 
         JLabel lblUser = new JLabel("Username:");
         lblUser.setBounds(50, 80, 100, 25);
@@ -41,23 +57,6 @@ public class Login extends JFrame {
         JButton btnLogin = new JButton("Login");
         btnLogin.setBounds(150, 160, 100, 30);
         add(btnLogin);
-
-        JLabel lblAskSignUp = new JLabel("<html><font color='black'>belum punya account?</font></html>");
-        lblAskSignUp.setBounds(115, 45, 200, 25);
-        add(lblAskSignUp);
-        
-        JLabel lblSignUp = new JLabel("<html><font color='blue'><u>sign up</u></font></html>");
-        lblSignUp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblSignUp.setBounds(245, 45, 200, 25);
-        add(lblSignUp);
-
-        // Pindah ke halaman Sign Up
-        lblSignUp.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                new SignUp().setVisible(true);
-                dispose();
-            }
-        });
 
         btnLogin.addActionListener(new ActionListener() {
             @Override
@@ -84,11 +83,12 @@ public class Login extends JFrame {
 
                 if (role.equals("admin")) {
                     JOptionPane.showMessageDialog(this, "Login Admin Berhasil!");
-                    new AdminDashboard(username).setVisible(true); // Akan kita buat di tahap selanjutnya
+                    new AdminDashboard(username).setVisible(true);
                 } else {
-                    //new HomeAfterLogin(username, userId).setVisible(true); // Akan kita buat di tahap selanjutnya
                     JOptionPane.showMessageDialog(this, "Login Berhasil!");
+                    new HomeUser(username, userId).setVisible(true);
                 }
+                
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Username atau password salah!", "Error", JOptionPane.ERROR_MESSAGE);
