@@ -7,7 +7,6 @@ public class DatabaseConnection {
     private static final String user = "root";
     private static final String password = "";
 
-    // Metode statis untuk memanggil koneksi dengan mudah dari JFrame mana saja
     public static Connection getConnection() {
         Connection conn = null;
         try {
