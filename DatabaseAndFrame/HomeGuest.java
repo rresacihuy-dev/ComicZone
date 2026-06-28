@@ -1,6 +1,5 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -15,10 +14,9 @@ public class HomeGuest extends JFrame {
     private JTextField txtSearch;
     private JComboBox<String> cbType;
 
-    // Warna tema gelap mirip halaman login
     private final Color bgColor = new Color(43, 45, 58);
     private final Color panelColor = new Color(55, 57, 73);
-    private final Color accentColor = new Color(138, 114, 255); // Ungu
+    private final Color accentColor = new Color(138, 114, 255);
     private final Color textColor = Color.WHITE;
 
     public HomeGuest() {
@@ -29,7 +27,6 @@ public class HomeGuest extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(bgColor);
 
-        // --- TOP BAR (LOGO SEBAGAI TOMBOL HOME) ---
         JPanel panelTop = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         panelTop.setBackground(bgColor);
         
@@ -40,7 +37,6 @@ public class HomeGuest extends JFrame {
         lblLogo.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Refresh halaman HomeGuest dan pertahankan fullscreen
                 HomeGuest home = new HomeGuest();
                 home.setExtendedState(getExtendedState());
                 home.setVisible(true);
@@ -50,7 +46,6 @@ public class HomeGuest extends JFrame {
         panelTop.add(lblLogo);
         add(panelTop, BorderLayout.NORTH);
 
-        // --- SIDEBAR ---
         JPanel panelSidebar = new JPanel();
         panelSidebar.setLayout(new BoxLayout(panelSidebar, BoxLayout.Y_AXIS));
         panelSidebar.setBackground(panelColor);
@@ -63,17 +58,14 @@ public class HomeGuest extends JFrame {
         panelSidebar.add(btnLogin);
         add(panelSidebar, BorderLayout.WEST);
 
-        // --- CONTENT AREA ---
         JPanel panelContent = new JPanel(new BorderLayout());
         panelContent.setBackground(bgColor);
         panelContent.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Container Atas (Banner + Filter)
         JPanel panelTopContent = new JPanel();
         panelTopContent.setLayout(new BoxLayout(panelTopContent, BoxLayout.Y_AXIS));
         panelTopContent.setBackground(bgColor);
 
-        // 1. Banner Custom
         JPanel panelBanner = new JPanel() {
             private Image bannerImg = new ImageIcon("assets/banner.jpeg").getImage();
             @Override
@@ -81,7 +73,6 @@ public class HomeGuest extends JFrame {
                 super.paintComponent(g);
                 if (bannerImg != null) {
                     g.drawImage(bannerImg, 0, 0, getWidth(), getHeight(), this);
-                    // Overlay gelap transparan agar teks terbaca
                     g.setColor(new Color(0, 0, 0, 100));
                     g.fillRect(0, 0, getWidth(), getHeight());
                 }
@@ -89,7 +80,7 @@ public class HomeGuest extends JFrame {
         };
         panelBanner.setPreferredSize(new Dimension(800, 150));
         panelBanner.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        panelBanner.setLayout(new GridBagLayout()); // Untuk menengahkan konten
+        panelBanner.setLayout(new GridBagLayout());
         
         JLabel lblBannerTitle = new JLabel("Why Sign Up?");
         lblBannerTitle.setFont(new Font("Arial", Font.BOLD, 28));
@@ -112,7 +103,6 @@ public class HomeGuest extends JFrame {
         panelTopContent.add(panelBanner);
         panelTopContent.add(Box.createVerticalStrut(15));
 
-        // 2. Filter Bar
         JPanel panelFilterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         panelFilterBar.setBackground(bgColor);
         
@@ -136,7 +126,6 @@ public class HomeGuest extends JFrame {
         panelTopContent.add(panelFilterBar);
         panelContent.add(panelTopContent, BorderLayout.NORTH);
 
-        // --- TABLE ---
         tableModel = new DefaultTableModel(new String[]{"ID", "Gambar", "Judul", "Tipe", "Genre", "Chapter", "Update Terakhir"}, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -163,19 +152,17 @@ public class HomeGuest extends JFrame {
         add(panelContent, BorderLayout.CENTER);
         loadComics();
 
-        // --- LISTENERS ---
         btnFilter.addActionListener(e -> loadComics());
         cbType.addActionListener(e -> loadComics());
 
         btnLogin.addActionListener(e -> {
             Login loginWindow = new Login();
-            loginWindow.setExtendedState(this.getExtendedState()); // Tahan Fullscreen
+            loginWindow.setExtendedState(this.getExtendedState());
             loginWindow.setVisible(true);
             dispose();
         });
     }
 
-    // Fungsi Styling Button
     private JButton styleButton(String text) {
         JButton btn = new JButton(text);
         btn.setBackground(accentColor);
@@ -186,7 +173,6 @@ public class HomeGuest extends JFrame {
         return btn;
     }
 
-    // Fungsi Styling Tabel
     private void styleTable(JTable table) {
         table.setRowHeight(115); 
         table.setBackground(panelColor);

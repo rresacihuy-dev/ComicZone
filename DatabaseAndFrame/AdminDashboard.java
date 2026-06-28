@@ -3,27 +3,23 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.sql.*;
 import java.util.Vector;
 
 public class AdminDashboard extends JFrame {
     private String adminUsername;
     
-    // Tema Warna Gelap
     private final Color bgColor = new Color(43, 45, 58);
     private final Color panelColor = new Color(55, 57, 73);
     private final Color accentColor = new Color(138, 114, 255);
     private final Color textColor = Color.WHITE;
 
-    // Komponen Komik
     private JTable tableComics;
     private DefaultTableModel comicsTableModel;
-    private JTextField txtTitle, txtType, txtGenre, txtImagePath, txtChapters, txtSearchComic;
+    private JTextField txtTitle, txtGenre, txtImagePath, txtChapters, txtSearchComic;
     private JComboBox<String> cbTypeFilter;
+    private JComboBox<String> cbTypeInput;
 
-    // Komponen Akun (Users)
     private JTable tableUsers;
     private DefaultTableModel usersTableModel;
     private JTextField txtSearchUser;
@@ -37,7 +33,6 @@ public class AdminDashboard extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(bgColor);
 
-        // --- TOP BAR (LOGO & HEADER) ---
         JPanel panelTop = new JPanel(new BorderLayout());
         panelTop.setBackground(bgColor);
         panelTop.setBorder(new EmptyBorder(10, 15, 10, 15));
@@ -47,7 +42,6 @@ public class AdminDashboard extends JFrame {
         lblHi.setForeground(textColor);
         panelTop.add(lblHi, BorderLayout.WEST);
 
-        // Logo
         ImageIcon originalLogo = new ImageIcon("assets/logo.png");
         Image scaledLogo = originalLogo.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
         JLabel lblLogo = new JLabel(new ImageIcon(scaledLogo), SwingConstants.CENTER);
@@ -58,7 +52,6 @@ public class AdminDashboard extends JFrame {
         panelTop.add(btnLogout, BorderLayout.EAST);
         add(panelTop, BorderLayout.NORTH);
 
-        // --- TABBED PANE UTAMA ---
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(panelColor);
         tabbedPane.setForeground(textColor);
@@ -69,20 +62,15 @@ public class AdminDashboard extends JFrame {
         
         add(tabbedPane, BorderLayout.CENTER);
 
-        // Load data awal
         loadComicData();
         loadUserData();
     }
 
-    // ==========================================
-    // PANEL KELOLA KOMIK
-    // ==========================================
     private JPanel createComicPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(bgColor);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Filter Bar Komik
         JPanel panelFilterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         panelFilterBar.setBackground(bgColor);
         
@@ -107,7 +95,6 @@ public class AdminDashboard extends JFrame {
 
         panel.add(panelFilterBar, BorderLayout.NORTH);
 
-        // Tabel Komik
         comicsTableModel = new DefaultTableModel(new String[]{"ID", "Gambar", "Judul", "Tipe", "Genre", "Chapter", "Tanggal Masuk"}, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -130,7 +117,6 @@ public class AdminDashboard extends JFrame {
         scrollComics.setBorder(BorderFactory.createLineBorder(panelColor, 2));
         panel.add(scrollComics, BorderLayout.CENTER);
 
-        // Form Input Komik
         JPanel panelBottom = new JPanel(new BorderLayout(5, 5));
         panelBottom.setBackground(bgColor);
         panelBottom.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -144,13 +130,13 @@ public class AdminDashboard extends JFrame {
         grid.fill = GridBagConstraints.HORIZONTAL;
 
         txtTitle = new JTextField(); styleTextField(txtTitle);
-        txtType = new JTextField(); styleTextField(txtType);
+        cbTypeInput = new JComboBox<>(new String[]{"Manga", "Manhwa", "Manhua"});
         txtGenre = new JTextField(); styleTextField(txtGenre);
         txtImagePath = new JTextField(); styleTextField(txtImagePath);
         txtChapters = new JTextField(); styleTextField(txtChapters);
         
         addFormRow(panelInput, "Judul Komik:", txtTitle, grid, 0);
-        addFormRow(panelInput, "Tipe:", txtType, grid, 1);
+        addFormRow(panelInput, "Tipe:", cbTypeInput, grid, 1);
         addFormRow(panelInput, "Genre:", txtGenre, grid, 2);
         addFormRow(panelInput, "Image Path:", txtImagePath, grid, 3);
         addFormRow(panelInput, "Total Chapter:", txtChapters, grid, 4);
@@ -177,15 +163,11 @@ public class AdminDashboard extends JFrame {
         return panel;
     }
 
-    // ==========================================
-    // PANEL KELOLA AKUN
-    // ==========================================
     private JPanel createUsersPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(bgColor);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Filter Bar Akun
         JPanel panelFilterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         panelFilterBar.setBackground(bgColor);
         
@@ -203,14 +185,13 @@ public class AdminDashboard extends JFrame {
 
         panel.add(panelFilterBar, BorderLayout.NORTH);
 
-        // Tabel Akun
         usersTableModel = new DefaultTableModel(new String[]{"ID", "Username", "Password", "Role", "Tanggal Dibuat"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
         tableUsers = new JTable(usersTableModel);
         styleTable(tableUsers);
-        tableUsers.setRowHeight(35); // Tinggi baris normal untuk teks
+        tableUsers.setRowHeight(35);
         tableUsers.getColumnModel().getColumn(0).setMaxWidth(50);
         
         JScrollPane scrollUsers = new JScrollPane(tableUsers);
@@ -218,7 +199,6 @@ public class AdminDashboard extends JFrame {
         scrollUsers.setBorder(BorderFactory.createLineBorder(panelColor, 2));
         panel.add(scrollUsers, BorderLayout.CENTER);
 
-        // Tombol Aksi Akun
         JPanel panelActionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panelActionButtons.setBackground(bgColor);
 
@@ -239,9 +219,6 @@ public class AdminDashboard extends JFrame {
         return panel;
     }
 
-    // ==========================================
-    // LOGIC DATABASE KOMIK
-    // ==========================================
     private void loadComicData() {
         comicsTableModel.setRowCount(0);
         StringBuilder sql = new StringBuilder("SELECT * FROM comics WHERE 1=1");
@@ -275,7 +252,7 @@ public class AdminDashboard extends JFrame {
                     row.add(rs.getString("type"));
                     row.add(rs.getString("genre"));
                     row.add(rs.getInt("chapters"));
-                    row.add(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at") : "-");
+                    row.add(rs.getTimestamp("last_update") != null ? rs.getTimestamp("last_update") : "-");
                     comicsTableModel.addRow(row);
                 }
             }
@@ -286,19 +263,25 @@ public class AdminDashboard extends JFrame {
         String sql = "INSERT INTO comics (title, type, genre, image_path, chapters) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
-            pst.setString(1, txtTitle.getText().trim());
-            pst.setString(2, txtType.getText().trim());
-            pst.setString(3, txtGenre.getText().trim());
-            pst.setString(4, txtImagePath.getText().trim());
-            pst.setInt(5, Integer.parseInt(txtChapters.getText().trim()));
+             
+            pst.setString(1, txtTitle.getText());
+            pst.setString(2, cbTypeInput.getSelectedItem().toString());
+            pst.setString(3, txtGenre.getText());
+            pst.setString(4, txtImagePath.getText());
+            pst.setInt(5, Integer.parseInt(txtChapters.getText()));
+            
             pst.executeUpdate();
             
-            txtTitle.setText(""); txtType.setText(""); txtGenre.setText("");
-            txtImagePath.setText(""); txtChapters.setText("");
+            txtTitle.setText(""); 
+            cbTypeInput.setSelectedIndex(0); 
+            txtGenre.setText("");
+            txtImagePath.setText(""); 
+            txtChapters.setText("");
             
             loadComicData();
             JOptionPane.showMessageDialog(this, "Komik berhasil ditambahkan!");
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: Pastikan input valid dan chapter berisi angka.");
         }
     }
@@ -344,9 +327,6 @@ public class AdminDashboard extends JFrame {
         }
     }
 
-    // ==========================================
-    // LOGIC DATABASE AKUN (USERS)
-    // ==========================================
     private void loadUserData() {
         usersTableModel.setRowCount(0);
         String search = txtSearchUser.getText().trim().toLowerCase();
@@ -362,13 +342,11 @@ public class AdminDashboard extends JFrame {
                     row.add(rs.getString("username"));
                     row.add(rs.getString("password")); 
                     row.add(rs.getString("role"));
-                    // Asumsi kolom created_at ada di DB (bisa disesuaikan jika namanya berbeda)
                     row.add(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at") : "-");
                     usersTableModel.addRow(row);
                 }
             }
         } catch (SQLException e) { 
-            // Jika table users tidak punya created_at, modifikasi kueri di atas untuk menyesuaikan.
             e.printStackTrace(); 
         }
     }
@@ -450,9 +428,6 @@ public class AdminDashboard extends JFrame {
         }
     }
 
-    // ==========================================
-    // UTILITAS & STYLING UI
-    // ==========================================
     private void logout() {
         Login loginWindow = new Login();
         loginWindow.setExtendedState(this.getExtendedState());
@@ -463,14 +438,14 @@ public class AdminDashboard extends JFrame {
         dispose();
     }
 
-    private void addFormRow(JPanel panel, String labelText, JTextField textField, GridBagConstraints gbc, int yPos) {
+    private void addFormRow(JPanel panel, String labelText, JComponent component, GridBagConstraints gbc, int yPos) {
         JLabel lbl = new JLabel(labelText);
         lbl.setForeground(textColor);
         gbc.gridx = 0; gbc.gridy = yPos; gbc.weightx = 0.1;
         panel.add(lbl, gbc);
         
         gbc.gridx = 1; gbc.gridy = yPos; gbc.weightx = 0.9;
-        panel.add(textField, gbc);
+        panel.add(component, gbc);
     }
 
     private JButton styleButton(String text) {

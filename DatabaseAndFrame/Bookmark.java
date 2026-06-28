@@ -17,7 +17,6 @@ public class Bookmark extends JFrame {
     private JTextField txtSearch;
     private JComboBox<String> cbType;
 
-    // Tema Warna Gelap
     private final Color bgColor = new Color(43, 45, 58);
     private final Color panelColor = new Color(55, 57, 73);
     private final Color accentColor = new Color(138, 114, 255);
@@ -34,7 +33,6 @@ public class Bookmark extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(bgColor);
 
-        // --- TOP BAR (LOGO SEBAGAI TOMBOL HOME) ---
         JPanel panelTop = new JPanel(new BorderLayout());
         panelTop.setBackground(bgColor);
         panelTop.setBorder(new EmptyBorder(10, 15, 10, 15));
@@ -52,7 +50,6 @@ public class Bookmark extends JFrame {
         panelTop.add(lblLogo, BorderLayout.CENTER);
         add(panelTop, BorderLayout.NORTH);
 
-        // --- CONTENT AREA ---
         JPanel panelContent = new JPanel(new BorderLayout());
         panelContent.setBackground(bgColor);
         panelContent.setBorder(new EmptyBorder(10, 20, 10, 20));
@@ -68,7 +65,6 @@ public class Bookmark extends JFrame {
         panelHeaderContent.add(lblHeaderTitle);
         panelHeaderContent.add(Box.createVerticalStrut(20));
 
-        // Filter Bar
         JPanel panelFilterBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         panelFilterBar.setBackground(bgColor);
         
@@ -95,7 +91,6 @@ public class Bookmark extends JFrame {
 
         panelContent.add(panelHeaderContent, BorderLayout.NORTH);
 
-        // Tabel Bookmark
         tableModel = new DefaultTableModel(new String[]{"ID Komik", "Gambar", "Judul Komik", "Tipe", "Total Chapter", "Chapter Dibaca", "Terakhir Update"}, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -119,16 +114,14 @@ public class Bookmark extends JFrame {
         scrollPane.setBorder(BorderFactory.createLineBorder(panelColor, 2));
         panelContent.add(scrollPane, BorderLayout.CENTER);
 
-        // Bottom Panel
         JPanel panelBottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         panelBottom.setBackground(bgColor);
         panelBottom.setBorder(new EmptyBorder(10, 0, 10, 0));
 
         JButton btnUpdateChapter = styleButton("Update Chapter Bacaan");
         
-        // Tombol Hapus Bookmark
         JButton btnDeleteBookmark = styleButton("Hapus Bookmark");
-        btnDeleteBookmark.setBackground(new Color(220, 53, 69)); // Warna merah untuk aksi hapus
+        btnDeleteBookmark.setBackground(new Color(220, 53, 69));
         
         panelBottom.add(btnUpdateChapter);
         panelBottom.add(btnDeleteBookmark);
@@ -138,12 +131,10 @@ public class Bookmark extends JFrame {
 
         loadBookmarks();
 
-        // Listeners
         btnFilter.addActionListener(e -> loadBookmarks());
         cbType.addActionListener(e -> loadBookmarks());
         btnUpdateChapter.addActionListener(e -> updateReadingChapter());
         
-        // Listener untuk tombol Hapus Bookmark
         btnDeleteBookmark.addActionListener(e -> deleteBookmark());
     }
 
@@ -287,7 +278,6 @@ public class Bookmark extends JFrame {
         }
     }
 
-    // Fitur baru: Menghapus komik dari bookmark
     private void deleteBookmark() {
         int selectedRow = tableBookmarks.getSelectedRow();
         if (selectedRow == -1) {
@@ -313,7 +303,7 @@ public class Bookmark extends JFrame {
                 pst.setInt(2, comicId);
                 pst.executeUpdate();
                 
-                loadBookmarks(); // Refresh tabel setelah dihapus
+                loadBookmarks();
                 JOptionPane.showMessageDialog(this, "Komik '" + title + "' berhasil dihapus dari bookmark.");
                 
             } catch (SQLException ex) {
