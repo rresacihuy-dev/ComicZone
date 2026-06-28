@@ -1,0 +1,305 @@
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.*;
+import java.util.Vector;
+
+public class HomeUser extends JFrame {
+    private String username;
+    private int userId;
+    private JTable tableComics;
+    private DefaultTableModel tableModel;
+    private JTextField txtSearch;
+    private JComboBox<String> cbType;
+
+    // Tema Warna Gelap
+    private final Color bgColor = new Color(43, 45, 58);
+    private final Color panelColor = new Color(55, 57, 73);
+    private final Color accentColor = new Color(138, 114, 255);
+    private final Color textColor = Color.WHITE;
+
+    public HomeUser(String username, int userId) {
+        this.username = username;
+        this.userId = userId;
+
+        setTitle("ComicZone - Home Page (User)");
+        setSize(950, 750);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(bgColor);
+
+        // --- TOP BAR (LOGO SEBAGAI TOMBOL HOME) ---
+        JPanel panelTop = new JPanel(new BorderLayout());
+        panelTop.setBackground(bgColor);
+        panelTop.setBorder(new EmptyBorder(10, 15, 10, 15));
+
+        // Logo Tengah (Klik untuk kembali ke Home/Refresh)
+        ImageIcon originalLogo = new ImageIcon("assets/logo.png");
+        Image scaledLogo = originalLogo.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+        JLabel lblLogo = new JLabel(new ImageIcon(scaledLogo), SwingConstants.CENTER);
+        lblLogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblLogo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                HomeUser home = new HomeUser(username, userId);
+                home.setExtendedState(getExtendedState());
+                home.setVisible(true);
+                dispose();
+            }
+        });
+        panelTop.add(lblLogo, BorderLayout.CENTER);
+        
+        // Dummy Label di kanan agar logo tetap pas di tengah (seimbang)
+        JLabel lblDummy = new JLabel("                "); 
+        panelTop.add(lblDummy, BorderLayout.EAST);
+
+        add(panelTop, BorderLayout.NORTH);
+
+        // --- SIDEBAR (TANPA TOMBOL HOME) ---
+        JPanel panelSidebar = new JPanel();
+        panelSidebar.setLayout(new BoxLayout(panelSidebar, BoxLayout.Y_AXIS));
+        panelSidebar.setBackground(panelColor);
+        panelSidebar.setPreferredSize(new Dimension(150, 0));
+        panelSidebar.setBorder(new EmptyBorder(20, 10, 0, 10));
+
+        JButton btnBookmark = styleButton("Bookmark");
+        JButton btnAccount = styleButton("Akun");
+        JButton btnLogout = styleButton("Logout");
+
+        Component[] buttons = {btnBookmark, btnAccount, btnLogout};
+        for (Component btn : buttons) {
+            ((JButton) btn).setAlignmentX(Component.CENTER_ALIGNMENT);
+            ((JButton) btn).setMaximumSize(new Dimension(120, 40));
+            panelSidebar.add(btn);
+            panelSidebar.add(Box.createVerticalStrut(15));
+        }
+        add(panelSidebar, BorderLayout.WEST);
+
+        // --- CONTENT AREA ---
+        JPanel panelContent = new JPanel(new BorderLayout());
+        panelContent.setBackground(bgColor);
+        panelContent.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
+        JPanel panelTopContent = new JPanel();
+        panelTopContent.setLayout(new BoxLayout(panelTopContent, BoxLayout.Y_AXIS));
+        panelTopContent.setBackground(bgColor);
+
+        // 1. Banner
+        JPanel panelBanner = new JPanel() {
+            private Image bannerImg = new ImageIcon("assets/banner.jpeg").getImage();
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (bannerImg != null) {
+                    g.drawImage(bannerImg, 0, 0, getWidth(), getHeight(), this);
+                    g.setColor(new Color(0, 0, 0, 80));
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                }
+            }
+        };
+        panelBanner.setPreferredSize(new Dimension(800, 150));
+        panelBanner.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+        panelBanner.setLayout(new GridBagLayout()); 
+        
+        JLabel lblBannerTitle = new JLabel("Hi " + username + ", welcome back to ComicZone!");
+        lblBannerTitle.setFont(new Font("Arial", Font.BOLD, 26));
+        lblBannerTitle.setForeground(Color.WHITE);
+        panelBanner.add(lblBannerTitle);
+        
+        panelTopContent.add(panelBanner);
+        panelTopContent.add(Box.createVerticalStrut(15));
+
+        // 2. Filter Bar
+        JPanel panelFilterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panelFilterBar.setBackground(bgColor);
+        
+        JLabel lblSearch = new JLabel("Cari Judul:");
+        lblSearch.setForeground(textColor);
+        panelFilterBar.add(lblSearch);
+        
+        txtSearch = new JTextField(20);
+        panelFilterBar.add(txtSearch);
+
+        JLabel lblType = new JLabel("Tipe:");
+        lblType.setForeground(textColor);
+        panelFilterBar.add(lblType);
+        
+        cbType = new JComboBox<>(new String[]{"Semua", "Manga", "Manhwa", "Manhua"});
+        panelFilterBar.add(cbType);
+
+        JButton btnFilter = styleButton("Cari");
+        panelFilterBar.add(btnFilter);
+        
+        panelTopContent.add(panelFilterBar);
+        panelContent.add(panelTopContent, BorderLayout.NORTH);
+
+        // --- TABLE ---
+        tableModel = new DefaultTableModel(new String[]{"ID", "Gambar", "Judul", "Tipe", "Genre", "Chapter", "Update Terakhir"}, 0) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 1) return ImageIcon.class; 
+                return Object.class;
+            }
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        
+        tableComics = new JTable(tableModel);
+        styleTable(tableComics);
+        
+        tableComics.getColumnModel().getColumn(0).setMinWidth(0);
+        tableComics.getColumnModel().getColumn(0).setMaxWidth(0);
+        tableComics.getColumnModel().getColumn(1).setMinWidth(90);
+        tableComics.getColumnModel().getColumn(1).setMaxWidth(90);
+        
+        JScrollPane scrollPane = new JScrollPane(tableComics);
+        scrollPane.getViewport().setBackground(panelColor);
+        scrollPane.setBorder(BorderFactory.createLineBorder(panelColor, 2));
+        panelContent.add(scrollPane, BorderLayout.CENTER);
+
+        // Bottom Bookmark Button
+        JButton btnAddBookmark = styleButton("Masukkan ke Bookmark");
+        JPanel panelBottomContent = new JPanel();
+        panelBottomContent.setBackground(bgColor);
+        panelBottomContent.add(btnAddBookmark);
+        panelContent.add(panelBottomContent, BorderLayout.SOUTH);
+
+        add(panelContent, BorderLayout.CENTER);
+        loadComics();
+
+        // --- LISTENERS ---
+        btnFilter.addActionListener(e -> loadComics());
+        cbType.addActionListener(e -> loadComics());
+        btnAddBookmark.addActionListener(e -> addToBookmark());
+        
+        btnBookmark.addActionListener(e -> {
+            // Contoh perpindahan window: setExtendedState() menahan ukuran frame
+            Bookmark bookmarkWindow = new Bookmark(username, userId);
+            bookmarkWindow.setExtendedState(this.getExtendedState());
+            bookmarkWindow.setVisible(true);
+            dispose();
+        });
+
+        btnAccount.addActionListener(e -> {
+            Account accountWindow = new Account(username, userId);
+            accountWindow.setExtendedState(this.getExtendedState());
+            accountWindow.setVisible(true);
+            dispose();
+        });
+
+        btnLogout.addActionListener(e -> {
+            HomeGuest guestWindow = new HomeGuest();
+            guestWindow.setExtendedState(this.getExtendedState());
+            guestWindow.setVisible(true);
+            dispose();
+        });
+    }
+
+    private JButton styleButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setBackground(accentColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setFont(new Font("Arial", Font.BOLD, 14));
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        return btn;
+    }
+
+    private void styleTable(JTable table) {
+        table.setRowHeight(115); 
+        table.setBackground(panelColor);
+        table.setForeground(textColor);
+        table.setGridColor(bgColor);
+        table.setSelectionBackground(accentColor);
+        table.setSelectionForeground(Color.WHITE);
+        
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(30, 32, 44));
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Arial", Font.BOLD, 14));
+    }
+
+    private void loadComics() {
+        tableModel.setRowCount(0);
+        StringBuilder sql = new StringBuilder("SELECT id, image_path, title, type, genre, chapters, last_update FROM comics WHERE 1=1");
+        
+        String searchKeyword = txtSearch.getText().trim().toLowerCase();
+        String selectedType = (String) cbType.getSelectedItem();
+        
+        if (selectedType != null && !selectedType.equals("Semua")) sql.append(" AND type = ?");
+        if (!searchKeyword.isEmpty()) sql.append(" AND LOWER(title) LIKE ?");
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql.toString())) {
+             
+            int paramIndex = 1;
+            if (selectedType != null && !selectedType.equals("Semua")) pst.setString(paramIndex++, selectedType);
+            if (!searchKeyword.isEmpty()) pst.setString(paramIndex++, "%" + searchKeyword + "%");
+             
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Vector<Object> row = new Vector<>();
+                    row.add(rs.getInt("id"));
+
+                    String finalPath = "image/" + rs.getString("image_path");
+                    ImageIcon finalIcon = null;
+                    try {
+                        Image scaledImg = new ImageIcon(finalPath).getImage().getScaledInstance(80, 110, Image.SCALE_SMOOTH);
+                        finalIcon = new ImageIcon(scaledImg);
+                    } catch (Exception ex) { finalIcon = new ImageIcon(); }
+                    
+                    row.add(finalIcon);
+                    row.add(rs.getString("title"));
+                    row.add(rs.getString("type"));
+                    row.add(rs.getString("genre"));
+                    row.add(rs.getInt("chapters"));
+                    row.add(rs.getTimestamp("last_update"));
+                    
+                    tableModel.addRow(row);
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    private void addToBookmark() {
+        int selectedRow = tableComics.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih komik terlebih dahulu!");
+            return;
+        }
+
+        int comicId = (int) tableModel.getValueAt(selectedRow, 0);
+        String title = (String) tableModel.getValueAt(selectedRow, 2);
+
+        String checkSql = "SELECT * FROM bookmarks WHERE user_id = ? AND comic_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement checkSt = conn.prepareStatement(checkSql)) {
+            
+            checkSt.setInt(1, userId);
+            checkSt.setInt(2, comicId);
+            ResultSet rs = checkSt.executeQuery();
+            
+            if (rs.next()) {
+                JOptionPane.showMessageDialog(this, "Komik '" + title + "' sudah ada di bookmark Anda.");
+                return;
+            }
+
+            String insertSql = "INSERT INTO bookmarks (user_id, comic_id) VALUES (?, ?)";
+            PreparedStatement insertSt = conn.prepareStatement(insertSql);
+            insertSt.setInt(1, userId);
+            insertSt.setInt(2, comicId);
+            insertSt.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Komik '" + title + "' berhasil ditambahkan ke Bookmark!");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal menambahkan bookmark.");
+        }
+    }
+}
