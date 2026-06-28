@@ -1,6 +1,9 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.*;
 
 public class Account extends JFrame {
@@ -12,43 +15,70 @@ public class Account extends JFrame {
     private JTextField txtNewUsername;
     private JPasswordField txtNewPassword;
 
+    // Tema Warna Gelap
+    private final Color bgColor = new Color(43, 45, 58);
+    private final Color panelColor = new Color(55, 57, 73);
+    private final Color accentColor = new Color(138, 114, 255);
+    private final Color textColor = Color.WHITE;
+
     public Account(String username, int userId) {
         this.username = username;
         this.userId = userId;
 
         setTitle("ComicZone - Account Page");
-        setSize(850, 600);
-        setMinimumSize(new Dimension(780, 550));
+        setSize(950, 750); // Menyamakan ukuran default dengan HomeUser
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
-        setLayout(new GridBagLayout());
-        getContentPane().setBackground(new Color(235, 238, 242));
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(bgColor);
 
-        JPanel cardPanel = new JPanel(new BorderLayout(10, 10));
+        // --- TOP BAR (LOGO SEBAGAI TOMBOL HOME) ---
+        JPanel panelTop = new JPanel(new BorderLayout());
+        panelTop.setBackground(bgColor);
+        panelTop.setBorder(new EmptyBorder(10, 15, 10, 15));
+
+        ImageIcon originalLogo = new ImageIcon("assets/logo.png");
+        Image scaledLogo = originalLogo.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+        JLabel lblLogo = new JLabel(new ImageIcon(scaledLogo), SwingConstants.CENTER);
+        lblLogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblLogo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                backToHome();
+            }
+        });
+        panelTop.add(lblLogo, BorderLayout.CENTER);
+        add(panelTop, BorderLayout.NORTH);
+
+        // --- CONTENT AREA ---
+        JPanel wrapperPanel = new JPanel(new GridBagLayout());
+        wrapperPanel.setBackground(bgColor);
+
+        JPanel cardPanel = new JPanel(new BorderLayout(10, 20));
         cardPanel.setPreferredSize(new Dimension(740, 480));
-        cardPanel.setBackground(Color.WHITE);
+        cardPanel.setBackground(panelColor);
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 214, 219), 1),
+                BorderFactory.createLineBorder(accentColor, 1),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
 
         JLabel lblHeader = new JLabel("PENGATURAN AKUN", SwingConstants.CENTER);
         lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblHeader.setForeground(new Color(43, 45, 66));
+        lblHeader.setForeground(textColor);
         cardPanel.add(lblHeader, BorderLayout.NORTH);
 
         JPanel panelCenter = new JPanel(new GridLayout(1, 2, 20, 0));
-        panelCenter.setBackground(Color.WHITE);
+        panelCenter.setBackground(panelColor);
 
+        // -- LEFT PANEL (INFORMASI STATISTIK) --
         JPanel panelLeft = new JPanel();
         panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.Y_AXIS));
-        panelLeft.setBackground(Color.WHITE);
+        panelLeft.setBackground(panelColor);
         panelLeft.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(230, 230, 230)), 
+                BorderFactory.createLineBorder(new Color(90, 90, 110)), 
                 " Informasi ", 
                 TitledBorder.LEFT, TitledBorder.TOP, 
-                new Font("Segoe UI", Font.BOLD, 14), new Color(100, 110, 120)
+                new Font("Segoe UI", Font.BOLD, 14), textColor
         ));
 
         JLabel lblName = new JLabel("Nama: " + this.username);
@@ -58,11 +88,11 @@ public class Account extends JFrame {
         lblTotalChapters = new JLabel("• Total Chapter Dibaca: Memuat...");
         
         Font fontFields = new Font("Segoe UI", Font.BOLD, 14);
-        lblName.setFont(fontFields);
-        lblId.setFont(fontFields);
-        lblCreatedAt.setFont(fontFields);
-        lblTotalBookmarks.setFont(fontFields);
-        lblTotalChapters.setFont(fontFields);
+        JLabel[] leftLabels = {lblName, lblId, lblCreatedAt, lblTotalBookmarks, lblTotalChapters};
+        for (JLabel label : leftLabels) {
+            label.setFont(fontFields);
+            label.setForeground(textColor);
+        }
 
         panelLeft.add(Box.createVerticalStrut(15));
         panelLeft.add(lblName);
@@ -74,19 +104,21 @@ public class Account extends JFrame {
         
         JLabel lblStatTitle = new JLabel("Statistik Membaca:");
         lblStatTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblStatTitle.setForeground(accentColor);
         panelLeft.add(lblStatTitle);
         panelLeft.add(Box.createVerticalStrut(10));
         panelLeft.add(lblTotalBookmarks);
         panelLeft.add(Box.createVerticalStrut(8));
         panelLeft.add(lblTotalChapters);
 
+        // -- RIGHT PANEL (MANAJEMEN DATA) --
         JPanel panelRight = new JPanel(new GridBagLayout());
-        panelRight.setBackground(Color.WHITE);
+        panelRight.setBackground(panelColor);
         panelRight.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(230, 230, 230)), 
+                BorderFactory.createLineBorder(new Color(90, 90, 110)), 
                 " Manajemen Data ", 
                 TitledBorder.LEFT, TitledBorder.TOP, 
-                new Font("Segoe UI", Font.BOLD, 14), new Color(100, 110, 120)
+                new Font("Segoe UI", Font.BOLD, 14), textColor
         ));
         
         GridBagConstraints grid = new GridBagConstraints();
@@ -95,28 +127,35 @@ public class Account extends JFrame {
         grid.weightx = 1.0;
 
         grid.gridx = 0; grid.gridy = 0;
-        panelRight.add(new JLabel("Username Baru:"), grid);
+        JLabel lblNewUser = new JLabel("Username Baru:");
+        lblNewUser.setForeground(textColor);
+        panelRight.add(lblNewUser, grid);
         
         grid.gridx = 0; grid.gridy = 1;
         txtNewUsername = new JTextField();
         txtNewUsername.setFont(fontFields);
         txtNewUsername.setText(this.username);
+        styleTextField(txtNewUsername);
         panelRight.add(txtNewUsername, grid);
 
         grid.gridx = 0; grid.gridy = 2;
-        panelRight.add(new JLabel("Password Baru (Opsional):"), grid);
+        JLabel lblNewPass = new JLabel("Password Baru (Opsional):");
+        lblNewPass.setForeground(textColor);
+        panelRight.add(lblNewPass, grid);
 
         grid.gridx = 0; grid.gridy = 3;
         txtNewPassword = new JPasswordField();
         txtNewPassword.setFont(fontFields);
+        styleTextField(txtNewPassword);
         panelRight.add(txtNewPassword, grid);
 
         grid.gridx = 0; grid.gridy = 4;
         grid.insets = new Insets(15, 10, 5, 10);
         JButton btnSave = new JButton("Simpan Perubahan");
-        btnSave.setBackground(new Color(40, 167, 69));
+        btnSave.setBackground(accentColor);
         btnSave.setForeground(Color.WHITE);
         btnSave.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnSave.setFocusPainted(false);
         btnSave.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         panelRight.add(btnSave, grid);
 
@@ -126,6 +165,7 @@ public class Account extends JFrame {
         btnDeleteAccount.setBackground(new Color(220, 53, 69));
         btnDeleteAccount.setForeground(Color.WHITE);
         btnDeleteAccount.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnDeleteAccount.setFocusPainted(false);
         btnDeleteAccount.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         panelRight.add(btnDeleteAccount, grid);
 
@@ -133,22 +173,34 @@ public class Account extends JFrame {
         panelCenter.add(panelRight);
         cardPanel.add(panelCenter, BorderLayout.CENTER);
 
-        JPanel panelBottom = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBottom.setBackground(Color.WHITE);
-        JButton btnBack = new JButton("Kembali ke Home");
-        btnBack.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        panelBottom.add(btnBack);
-        cardPanel.add(panelBottom, BorderLayout.SOUTH);
-
-        add(cardPanel);
+        wrapperPanel.add(cardPanel);
+        add(wrapperPanel, BorderLayout.CENTER);
 
         loadUserStats();
+
+        // Listeners
         btnSave.addActionListener(e -> updateAccount());
         btnDeleteAccount.addActionListener(e -> deleteAccount());
-        btnBack.addActionListener(e -> {
-            new HomeUser(this.username, this.userId).setVisible(true);
-            dispose();
-        });
+    }
+
+    private void styleTextField(JTextField field) {
+        field.setBackground(new Color(65, 67, 85));
+        field.setForeground(Color.WHITE);
+        field.setCaretColor(Color.WHITE);
+        field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(90, 90, 110), 1),
+                new EmptyBorder(5, 5, 5, 5)
+        ));
+    }
+
+    private void backToHome() {
+        HomeUser home = new HomeUser(username, userId);
+        home.setExtendedState(this.getExtendedState());
+        if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+            home.setBounds(this.getBounds());
+        }
+        home.setVisible(true);
+        dispose();
     }
 
     private void loadUserStats() {
@@ -165,11 +217,7 @@ public class Account extends JFrame {
             ResultSet rsUser = pstUser.executeQuery();
             if (rsUser.next()) {
                 Timestamp timestamp = rsUser.getTimestamp("created_at");
-                if (timestamp != null) {
-                    lblCreatedAt.setText("Terdaftar Sejak: " + timestamp.toString().substring(0, 10));
-                } else {
-                    lblCreatedAt.setText("Terdaftar Sejak: -");
-                }
+                lblCreatedAt.setText("Terdaftar Sejak: " + (timestamp != null ? timestamp.toString().substring(0, 10) : "-"));
             }
 
             pstCount.setInt(1, this.userId);
@@ -183,10 +231,7 @@ public class Account extends JFrame {
             if (rsSum.next()) {
                 lblTotalChapters.setText("• Total Chapter Dibaca: " + rsSum.getInt("total_chapter"));
             }
-             
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        } catch (SQLException ex) { ex.printStackTrace(); }
     }
 
     private void updateAccount() {
@@ -219,7 +264,13 @@ public class Account extends JFrame {
             this.username = newUsername;
             JOptionPane.showMessageDialog(this, "Profil berhasil diperbarui!");
             
-            new Account(this.username, this.userId).setVisible(true);
+            // Reload page dengan state ukuran window
+            Account account = new Account(this.username, this.userId);
+            account.setExtendedState(this.getExtendedState());
+            if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+                account.setBounds(this.getBounds());
+            }
+            account.setVisible(true);
             dispose();
 
         } catch (SQLException ex) {
@@ -239,11 +290,14 @@ public class Account extends JFrame {
                 try (PreparedStatement pst2 = conn.prepareStatement(sql2)) { pst2.setInt(1, this.userId); pst2.executeUpdate(); }
 
                 JOptionPane.showMessageDialog(this, "Akun berhasil dihapus.");
-                new Login().setVisible(true);
+                Login login = new Login();
+                login.setExtendedState(this.getExtendedState());
+                if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+                    login.setBounds(this.getBounds());
+                }
+                login.setVisible(true);
                 dispose();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+            } catch (SQLException ex) { ex.printStackTrace(); }
         }
     }
 }
