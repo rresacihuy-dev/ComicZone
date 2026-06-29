@@ -60,7 +60,6 @@ public class SignUp extends JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 Login loginFrame = new Login();
                 
-                // --- PERTAHANKAN FULLSCREEN/UKURAN LAYAR ---
                 loginFrame.setExtendedState(SignUp.this.getExtendedState());
                 if (SignUp.this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
                     loginFrame.setBounds(SignUp.this.getBounds());
@@ -153,7 +152,6 @@ public class SignUp extends JFrame {
             
             Login loginWindow = new Login();
             
-            // --- PERTAHANKAN FULLSCREEN/UKURAN LAYAR ---
             loginWindow.setExtendedState(this.getExtendedState());
             if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
                 loginWindow.setBounds(this.getBounds());

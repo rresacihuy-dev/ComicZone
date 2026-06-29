@@ -14,8 +14,8 @@ public class Account extends JFrame {
     private JLabel lblTotalChapters;
     private JTextField txtNewUsername;
     private JPasswordField txtNewPassword;
+    private JCheckBox chkShowPassword;
 
-    // Tema Warna Gelap
     private final Color bgColor = new Color(43, 45, 58);
     private final Color panelColor = new Color(55, 57, 73);
     private final Color accentColor = new Color(138, 114, 255);
@@ -26,13 +26,12 @@ public class Account extends JFrame {
         this.userId = userId;
 
         setTitle("ComicZone - Account Page");
-        setSize(950, 750); // Menyamakan ukuran default dengan HomeUser
+        setSize(950, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(bgColor);
 
-        // --- TOP BAR (LOGO SEBAGAI TOMBOL HOME) ---
         JPanel panelTop = new JPanel(new BorderLayout());
         panelTop.setBackground(bgColor);
         panelTop.setBorder(new EmptyBorder(10, 15, 10, 15));
@@ -50,7 +49,6 @@ public class Account extends JFrame {
         panelTop.add(lblLogo, BorderLayout.CENTER);
         add(panelTop, BorderLayout.NORTH);
 
-        // --- CONTENT AREA ---
         JPanel wrapperPanel = new JPanel(new GridBagLayout());
         wrapperPanel.setBackground(bgColor);
 
@@ -70,7 +68,6 @@ public class Account extends JFrame {
         JPanel panelCenter = new JPanel(new GridLayout(1, 2, 20, 0));
         panelCenter.setBackground(panelColor);
 
-        // -- LEFT PANEL (INFORMASI STATISTIK) --
         JPanel panelLeft = new JPanel();
         panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.Y_AXIS));
         panelLeft.setBackground(panelColor);
@@ -111,7 +108,6 @@ public class Account extends JFrame {
         panelLeft.add(Box.createVerticalStrut(8));
         panelLeft.add(lblTotalChapters);
 
-        // -- RIGHT PANEL (MANAJEMEN DATA) --
         JPanel panelRight = new JPanel(new GridBagLayout());
         panelRight.setBackground(panelColor);
         panelRight.setBorder(BorderFactory.createTitledBorder(
@@ -150,6 +146,24 @@ public class Account extends JFrame {
         panelRight.add(txtNewPassword, grid);
 
         grid.gridx = 0; grid.gridy = 4;
+        grid.insets = new Insets(0, 10, 10, 10);
+        chkShowPassword = new JCheckBox("Tampilkan Password");
+        chkShowPassword.setBackground(panelColor);
+        chkShowPassword.setForeground(textColor);
+        chkShowPassword.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        chkShowPassword.setFocusPainted(false);
+        chkShowPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+        chkShowPassword.addActionListener(e -> {
+            if (chkShowPassword.isSelected()) {
+                txtNewPassword.setEchoChar((char) 0);
+            } else {
+                txtNewPassword.setEchoChar('•');
+            }
+        });
+        panelRight.add(chkShowPassword, grid);
+
+        grid.gridx = 0; grid.gridy = 5;
         grid.insets = new Insets(15, 10, 5, 10);
         JButton btnSave = new JButton("Simpan Perubahan");
         btnSave.setBackground(accentColor);
@@ -159,7 +173,7 @@ public class Account extends JFrame {
         btnSave.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         panelRight.add(btnSave, grid);
 
-        grid.gridx = 0; grid.gridy = 5;
+        grid.gridx = 0; grid.gridy = 6;
         grid.insets = new Insets(20, 10, 0, 10);
         JButton btnDeleteAccount = new JButton("Hapus Akun Permanen");
         btnDeleteAccount.setBackground(new Color(220, 53, 69));
@@ -178,7 +192,6 @@ public class Account extends JFrame {
 
         loadUserStats();
 
-        // Listeners
         btnSave.addActionListener(e -> updateAccount());
         btnDeleteAccount.addActionListener(e -> deleteAccount());
     }
@@ -264,7 +277,6 @@ public class Account extends JFrame {
             this.username = newUsername;
             JOptionPane.showMessageDialog(this, "Profil berhasil diperbarui!");
             
-            // Reload page dengan state ukuran window
             Account account = new Account(this.username, this.userId);
             account.setExtendedState(this.getExtendedState());
             if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {

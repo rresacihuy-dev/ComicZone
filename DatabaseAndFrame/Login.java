@@ -60,7 +60,6 @@ public class Login extends JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 SignUp signUpFrame = new SignUp();
                 
-                // --- PERTAHANKAN FULLSCREEN/UKURAN LAYAR ---
                 signUpFrame.setExtendedState(Login.this.getExtendedState());
                 if (Login.this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
                     signUpFrame.setBounds(Login.this.getBounds());
@@ -158,7 +157,6 @@ public class Login extends JFrame {
                 if (role.equals("admin")) {
                     AdminDashboard adminWindow = new AdminDashboard(username);
                     
-                    // --- PERTAHANKAN FULLSCREEN/UKURAN LAYAR ---
                     adminWindow.setExtendedState(this.getExtendedState());
                     if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
                         adminWindow.setBounds(this.getBounds());
@@ -167,7 +165,6 @@ public class Login extends JFrame {
                 } else {
                     HomeUser homeWindow = new HomeUser(username, userId);
                     
-                    // --- PERTAHANKAN FULLSCREEN/UKURAN LAYAR ---
                     homeWindow.setExtendedState(this.getExtendedState());
                     if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
                         homeWindow.setBounds(this.getBounds());

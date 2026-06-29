@@ -33,12 +33,10 @@ public class HomeUser extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(bgColor);
 
-        // --- TOP BAR (LOGO SEBAGAI TOMBOL HOME) ---
         JPanel panelTop = new JPanel(new BorderLayout());
         panelTop.setBackground(bgColor);
         panelTop.setBorder(new EmptyBorder(10, 15, 10, 15));
 
-        // Logo Tengah (Klik untuk kembali ke Home/Refresh)
         ImageIcon originalLogo = new ImageIcon("assets/logo.png");
         Image scaledLogo = originalLogo.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
         JLabel lblLogo = new JLabel(new ImageIcon(scaledLogo), SwingConstants.CENTER);
@@ -54,13 +52,11 @@ public class HomeUser extends JFrame {
         });
         panelTop.add(lblLogo, BorderLayout.CENTER);
         
-        // Dummy Label di kanan agar logo tetap pas di tengah (seimbang)
         JLabel lblDummy = new JLabel("                "); 
         panelTop.add(lblDummy, BorderLayout.EAST);
 
         add(panelTop, BorderLayout.NORTH);
 
-        // --- SIDEBAR (TANPA TOMBOL HOME) ---
         JPanel panelSidebar = new JPanel();
         panelSidebar.setLayout(new BoxLayout(panelSidebar, BoxLayout.Y_AXIS));
         panelSidebar.setBackground(panelColor);
@@ -80,7 +76,6 @@ public class HomeUser extends JFrame {
         }
         add(panelSidebar, BorderLayout.WEST);
 
-        // --- CONTENT AREA ---
         JPanel panelContent = new JPanel(new BorderLayout());
         panelContent.setBackground(bgColor);
         panelContent.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -89,7 +84,6 @@ public class HomeUser extends JFrame {
         panelTopContent.setLayout(new BoxLayout(panelTopContent, BoxLayout.Y_AXIS));
         panelTopContent.setBackground(bgColor);
 
-        // 1. Banner
         JPanel panelBanner = new JPanel() {
             private Image bannerImg = new ImageIcon("assets/banner.jpeg").getImage();
             @Override
@@ -114,7 +108,6 @@ public class HomeUser extends JFrame {
         panelTopContent.add(panelBanner);
         panelTopContent.add(Box.createVerticalStrut(15));
 
-        // 2. Filter Bar
         JPanel panelFilterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         panelFilterBar.setBackground(bgColor);
         
@@ -138,7 +131,6 @@ public class HomeUser extends JFrame {
         panelTopContent.add(panelFilterBar);
         panelContent.add(panelTopContent, BorderLayout.NORTH);
 
-        // --- TABLE ---
         tableModel = new DefaultTableModel(new String[]{"ID", "Gambar", "Judul", "Tipe", "Genre", "Chapter", "Update Terakhir"}, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -162,7 +154,6 @@ public class HomeUser extends JFrame {
         scrollPane.setBorder(BorderFactory.createLineBorder(panelColor, 2));
         panelContent.add(scrollPane, BorderLayout.CENTER);
 
-        // Bottom Bookmark Button
         JButton btnAddBookmark = styleButton("Masukkan ke Bookmark");
         JPanel panelBottomContent = new JPanel();
         panelBottomContent.setBackground(bgColor);
@@ -172,13 +163,11 @@ public class HomeUser extends JFrame {
         add(panelContent, BorderLayout.CENTER);
         loadComics();
 
-        // --- LISTENERS ---
         btnFilter.addActionListener(e -> loadComics());
         cbType.addActionListener(e -> loadComics());
         btnAddBookmark.addActionListener(e -> addToBookmark());
         
         btnBookmark.addActionListener(e -> {
-            // Contoh perpindahan window: setExtendedState() menahan ukuran frame
             Bookmark bookmarkWindow = new Bookmark(username, userId);
             bookmarkWindow.setExtendedState(this.getExtendedState());
             bookmarkWindow.setVisible(true);
