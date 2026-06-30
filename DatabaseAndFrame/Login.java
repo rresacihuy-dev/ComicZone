@@ -46,7 +46,7 @@ public class Login extends JFrame {
         JLabel lblAskSignUp = new JLabel("Don't have an account?", SwingConstants.RIGHT);
         lblAskSignUp.setForeground(new Color(200, 200, 200));
         lblAskSignUp.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblAskSignUp.setBounds(105, 75, 123, 25);
+        lblAskSignUp.setBounds(100, 75, 130, 25);
         formPanel.add(lblAskSignUp);
         
         JLabel lblSignUp = new JLabel("<html><b>Sign Up</b></html>");
