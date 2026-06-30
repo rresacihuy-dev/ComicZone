@@ -6,7 +6,7 @@ import java.awt.*;
 import java.sql.*;
 import java.util.Vector;
 
-public class AdminDashboard extends JFrame {
+public class AdminDashboard extends JFrame implements UserAction{
     private String adminUsername;
     
     private final Color bgColor = new Color(43, 45, 58);
@@ -428,7 +428,8 @@ public class AdminDashboard extends JFrame {
         }
     }
 
-    private void logout() {
+    @Override
+    public void logout() {
         Login loginWindow = new Login();
         loginWindow.setExtendedState(this.getExtendedState());
         if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
@@ -480,4 +481,8 @@ public class AdminDashboard extends JFrame {
         header.setForeground(Color.WHITE);
         header.setFont(new Font("Arial", Font.BOLD, 14));
     }
+}
+
+interface UserAction {
+    void logout(); 
 }
